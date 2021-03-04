@@ -1,32 +1,54 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+
+    <input
+      type="text"
+      v-model="query"
+      @change="loadData"
+    >
+
+    <Table
+      v-if="query.trim() && packages.objects.length"
+      v-bind:packages="packages"
+    />
+
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+  import Table from '@/components/Table';
 
-#nav {
-  padding: 30px;
+  export default {
+    data() {
+      return {
+        packages: {},
+        query: '',
+      }
+    },
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+    components: {
+      Table,
+    },
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+    methods: {
+      loadData() {
+        fetch(`http://registry.npmjs.com/-/v1/search?text=${this.query.trim()}&from=0&size=10`)
+          .then(response => response.json())
+          .then((data) => {
+            this.packages = data;
+            console.log(data);
+          });
+      },
+    },
+
+    watch: {
+      query: function() {
+        this.loadData();
+      },
+    },
   }
-}
+</script>
+
+<style lang="scss">
+
 </style>
