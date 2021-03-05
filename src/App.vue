@@ -4,11 +4,13 @@
     <input
       type="text"
       v-model="query"
-      @change="loadData"
+      @input="loadData"
     >
 
+    Found results: {{ packages.total }}
+
     <Table
-      v-if="query.trim() && packages.objects.length"
+      v-if="isTableVisible"
       v-bind:packages="packages"
     />
 
@@ -23,6 +25,7 @@
       return {
         packages: {},
         query: '',
+        isTableVisible: false,
       }
     },
 
@@ -36,14 +39,17 @@
           .then(response => response.json())
           .then((data) => {
             this.packages = data;
-            console.log(data);
           });
+      },
+
+      tableVisability() {
+        this.isTableVisible = this.query.trim() && this.packages.objects.length;
       },
     },
 
     watch: {
-      query: function() {
-        this.loadData();
+      packages() {
+        this.tableVisability();
       },
     },
   }
