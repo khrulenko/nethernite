@@ -1,22 +1,33 @@
 <template>
   <div id="app">
 
-    <input
-      type="text"
+    <b-form-input
       v-model="query"
-      @input="newSearch"
+      @update="newSearch"
+      placeholder="enter package name or it's part (at least 2 symbols)"
+      type="text"
+      debounce="500"
+      :state="isCorrect"
     >
+    </b-form-input>
 
-    Found results: {{ packages.total }}
+    <b-alert
+      v-if="isTableVisible"
+      variant="success"
+      show
+    >
+      Found results: {{ packages.total }}
+    </b-alert>
 
     <div
       v-if="isTableVisible"
     >
+
       <Table
         v-bind:packages="packages"
       />
 
-      <paginate
+      <!-- <paginate
         v-model="currentPage"
         :page-count="totalPages"
         :click-handler="loadData"
@@ -26,16 +37,35 @@
         :active-class="'active-page'"
         :break-view-link-class="'break-page-link'"
       >
-      </paginate>
+      </paginate> -->
 
-      <label>
-        Go to page:
-        <input
-          type="text"
-          v-model="toPage"
-          @keyup.enter="goToPage"
+      <div class="mt-3">
+        <b-pagination-nav
+          v-model="currentPage"
+          :number-of-pages="totalPages"
+          :link-gen="loadData"
+          limit="9"
+          pills
+          size="md"
+          base-url="#"
+          align="center"
+          exact-active-class="active-page"
         >
-      </label>
+        </b-pagination-nav>
+      </div>
+
+      <div>
+        <b-form-input
+          id="range-1"
+          v-model="currentPage"
+          type="range"
+          min="1"
+          :max="totalPages"
+          :lazy="true"
+        >
+        </b-form-input>
+      </div>
+
     </div>
 
   </div>
@@ -87,6 +117,14 @@
       }
     },
 
+    computed: {
+      isCorrect() {
+        return this.query.length === 0 ? null
+          : this.query.trim().length >= 2 ? true
+          : false;
+      },
+    },
+
     watch: {
       packages() {
         this.tableVisability();
@@ -98,18 +136,5 @@
 </script>
 
 <style lang="scss">
-  .pagination {
-    display: flex;
-    gap: 10px;
 
-    list-style: none;
-  }
-
-  .active-page {
-    background-color: rgb(77, 224, 89);
-  }
-
-  .break-page-link {
-    cursor: default !important;
-  }
 </style>
