@@ -92,7 +92,7 @@
 
     methods: {
       loadData() {
-        fetch(`http://registry.npmjs.com/-/v1/search?text=${this.query.trim()}&from=${(this.currentPage - 1) * 10}&size=10`)
+        fetch(`https://registry.npmjs.com/-/v1/search?text=${this.query.trim()}&from=${(this.currentPage - 1) * 10}&size=10`)
           .then(response => response.json())
           .then((data) => {
             this.packages = data;
