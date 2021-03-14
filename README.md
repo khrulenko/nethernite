@@ -1,4 +1,5 @@
 # nethernite
+[LINK to app preview](https://khrulenko.github.io/nethernite/).
 
 ## Project setup
 ```
